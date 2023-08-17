@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "c086a6da-0959-43fb-a0cb-506b889029c7",
+		"_postman_id": "bf5b235b-4529-45ce-b7f7-a59d49ca73bf",
 		"name": "JSB25RT Diario Viajes",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "3145194"
@@ -16,7 +16,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"email\": \"hola@example.com\", \n    \"username\": \"juancho\", \n    \"password\": \"123123\"\n}",
+							"raw": "{\n    \"email\": \"cristobald@me.com\", \n    \"username\": \"cristobald\", \n    \"password\": \"123123\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -31,6 +31,176 @@
 							"path": [
 								"users",
 								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Validate User",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/users/validate/36035226-de57-4f64-a604-700a88b6ac9d",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"users",
+								"validate",
+								"36035226-de57-4f64-a604-700a88b6ac9d"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"pm.globals.set(\"jwt_token\", jsonData.data.token);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"cristobald@me.com\",\n    \"password\": \"123456\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/users/login",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"users",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get User",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{jwt_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{URL}}/users/3",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"users",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update User Avatar",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{jwt_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "avatar",
+									"type": "file",
+									"src": "/Users/cristobaldominguez/Pictures/emoji.jpg"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{URL}}/users/avatar",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"users",
+								"avatar"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Request Update Password",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"cristobald@me.com\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/users/recover-password",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"users",
+								"recover-password"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update User Password",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"recoveryPassCode\": \"456566495\",\n    \"newPass\": \"123456\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/users/reset-password",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"users",
+								"reset-password"
 							]
 						}
 					},

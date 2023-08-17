@@ -55,7 +55,99 @@ async function newUser ({ email, username, password, registrationCode }) {
   }
 }
 
+async function updateUserRegCode ({ registrationCode }) {
+  let connection
+
+  try {
+    connection = await getPool()
+
+    // Intentamos localizar a un usuario con el código de registro que nos llegue.
+    const user = await getUserBy({ registrationCode })
+
+    // Si no hay usuarios con ese código de registro lanzamos un error.
+    if (!user) throw new Error('Código no encontrado')
+
+    // Si existe el usuario, lo actualizamos.
+    await connection.query(
+      'UPDATE users SET active = true, registrationCode = null, modifiedAt = ? WHERE id = ?',
+      [new Date(), user.id]
+    )
+  } catch (error) {
+    console.log(error)
+    return error
+  } finally {
+    if (connection) connection.release()
+  }
+}
+
+async function updateUserAvatar ({ avatar, userId }) {
+  let connection
+
+  try {
+    connection = await getPool()
+
+    // Actualizamos el avatar del usaurio con su fecha de modificación.
+    await connection.query(
+      'UPDATE users SET avatar = ?, modifiedAt = ? WHERE id = ?',
+      [avatar, new Date(), userId]
+    )
+  } catch (error) {
+    console.log(error)
+    return error
+  } finally {
+    if (connection) connection.release()
+  }
+}
+
+async function updateUserRecoverPass ({ id, recoverPassCode }) {
+  let connection
+
+  try {
+    connection = await getPool()
+
+    // Insertamos el recoveryPassCode en el usuario
+    await connection.query(
+      'UPDATE users SET recoveryPassCode = ?, modifiedAt = ? WHERE id = ?',
+      [recoverPassCode, new Date(), id]
+    )
+  } catch (error) {
+    console.log(error)
+    return error
+  } finally {
+    if (connection) connection.release()
+  }
+}
+
+async function updateUserPass ({ recoveryPassCode, newPass }) {
+  let connection
+
+  try {
+    connection = await getPool()
+
+    // Comprobamos si existe algún usuario con ese código de recuperación.
+    const user = await getUserBy({ recoveryPassCode })
+
+    // Si no hay ningún usuario con ese código de recuperación lanzamos un error.
+    if (!user) throw new Error('Código de recuperación incorrecto')
+
+    // Actualizamos el usuario.
+    await connection.query(
+      'UPDATE users SET password = ?, recoveryPassCode = null, modifiedAt = ? WHERE id = ?',
+      [newPass, new Date(), user.id]
+    )
+  } catch (error) {
+    console.log(error)
+    return error
+  } finally {
+    if (connection) connection.release()
+  }
+}
+
 export {
   getUserBy,
-  newUser
+  newUser,
+  updateUserRegCode,
+  updateUserAvatar,
+  updateUserRecoverPass,
+  updateUserPass
 }
