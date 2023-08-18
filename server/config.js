@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url'
 
 const PORT = process.env.PORT || 3000
 const root = dirname(fileURLToPath(import.meta.url))
+const maxImageSize = 1024
 
 const {
   MYSQL_HOST,
@@ -19,6 +20,7 @@ const {
 export {
   root,
   PORT,
+  maxImageSize,
   MYSQL_HOST,
   MYSQL_USER,
   MYSQL_PASSWORD,

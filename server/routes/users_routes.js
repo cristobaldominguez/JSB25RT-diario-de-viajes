@@ -1,7 +1,7 @@
 import express from 'express'
 
 // Controllers
-import userController from '../controllers/user_controller.js'
+import * as userController from '../controllers/user_controller.js'
 
 // Middlewares
 import authUser from '../middlewares/auth_user.js'

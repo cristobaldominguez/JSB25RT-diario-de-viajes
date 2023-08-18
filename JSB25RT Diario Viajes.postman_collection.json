@@ -207,6 +207,180 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "Entries",
+			"item": [
+				{
+					"name": "Create Entry",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{jwt_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "title",
+									"value": "Wow, a este lugar debes venir!",
+									"type": "text"
+								},
+								{
+									"key": "place",
+									"value": "España",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "Un lugar para disfrutar",
+									"type": "text"
+								},
+								{
+									"key": "img01",
+									"type": "file",
+									"src": "/Users/cristobaldominguez/Pictures/Wallpapers/elisabeth-jurenka-hx1cA6qGkvY-unsplash.jpg"
+								},
+								{
+									"key": "img02",
+									"type": "file",
+									"src": [],
+									"disabled": true
+								},
+								{
+									"key": "img03",
+									"type": "file",
+									"src": [],
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{URL}}/entries/",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"entries",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Entries",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{jwt_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{URL}}/entries",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"entries"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Entry",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{jwt_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{URL}}/entries/1",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"entries",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Photo",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{jwt_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "photo",
+									"type": "file",
+									"src": "/Users/cristobaldominguez/Pictures/Wallpapers/marek-piwnicki-cRCyuPRuVfw-unsplash.jpg"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{URL}}/entries/3/photos",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"entries",
+								"3",
+								"photos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Photo",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{jwt_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{URL}}/entries/3/photos/8",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"entries",
+								"3",
+								"photos",
+								"8"
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		}
 	],
 	"variable": [

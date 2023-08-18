@@ -17,9 +17,11 @@ import randomDigits from '../helpers/random_digits.js'
 
 // SendMail
 import sendMail from '../services/send_mail.js'
+import recoveryPassword from '../mails/recovery_password.js'
+import validationCode from '../mails/validation_code.js'
 
 // Config
-import { PORT, SECRET } from '../config.js'
+import { SECRET } from '../config.js'
 
 // Services
 import { deletePhoto, savePhoto } from '../services/photos.js'
@@ -43,8 +45,7 @@ async function createUser (req, res, next) {
     if (user instanceof Error) throw user
 
     const emailSubject = 'Activa tu usuario en Diario de Viajes'
-    const emailBody = `¡Bienvenid@ ${username}!
-    Por favor verifica el usuario a través de la dirección: http://localhost:${PORT}/users/validate/${user.registrationCode}`
+    const emailBody = validationCode({ username, registrationCode })
 
     const sentMail = await sendMail(user.email, emailSubject, emailBody)
     if (sentMail instanceof Error) throw sentMail
@@ -186,13 +187,7 @@ async function sendRecoverPass (req, res, next) {
     if (insertedCode instanceof Error) throw insertedCode
 
     const emailSubject = 'Recuperación de contraseña en Diario de Viajes'
-
-    const emailBody = `
-    Se ha solicitado la recuperación de contraseña para este email en Diaro de Viajes.
-    Utiliza el siguiente código para crear una nueva contraseña: ${recoverPassCode}
-    
-    Si no has sido tú ignora este email.
-    `
+    const emailBody = recoveryPassword({ recoverPassCode })
 
     const sentMail = await sendMail(email, emailSubject, emailBody)
     if (sentMail instanceof Error) throw sentMail
@@ -230,7 +225,7 @@ async function editUserPass (req, res, next) {
   }
 }
 
-export default {
+export {
   createUser,
   validateUser,
   loginUser,
