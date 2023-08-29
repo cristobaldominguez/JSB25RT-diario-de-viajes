@@ -1,4 +1,5 @@
 import jwt_decode from 'jwt-decode'
+import { toast } from 'sonner'
 
 import Http from '../services/HttpService'
 import useAuth from './useAuth'
@@ -10,6 +11,10 @@ function useServer() {
     if (data.status === 'ok' && data.data?.token) {
       const userDecoded = jwt_decode(data.data.token)
       setUser({ user: userDecoded, token: data.data.token })
+    }
+
+    if (data.error) {
+      toast.error(data.error.message)
     }
 
     return { data, loading, error }

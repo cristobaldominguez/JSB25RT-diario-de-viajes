@@ -1,3 +1,4 @@
+import Notifications from './components/Notifications'
 import useAuth from './hooks/useAuth'
 import useServer from './hooks/useServer'
 
@@ -12,6 +13,7 @@ function App() {
   }
 
   return <>
+    <Notifications />
     <form onSubmit={submitHandler}>
       <div>
         <label htmlFor="email">Email</label>
