@@ -8,6 +8,8 @@ import { maxImageSize } from '../config.js'
 
 // Errors
 import ValidationError from '../errors/validation_error.js'
+import ContentError from '../errors/content_error.js'
+import AuthError from '../errors/auth_error.js'
 
 async function createEntry (req, res, next) {
   try {
@@ -94,21 +96,15 @@ async function addPhoto (req, res, next) {
     const { id: userId } = req.user
 
     // Si no hay foto lanzamos un error.
-    if (!req.files?.photo) {
-      throw new Error('Faltan campos')
-    }
+    if (!req.files?.photo) throw new ContentError({ message: 'Faltan campos', status: 400 })
 
     const entry = await getEntryBy({ id, userId })
 
     // Si no somos los dueños de la entrada lanzamos un error.
-    if (!entry.owner) {
-      throw new Error('No tienes suficientes permisos')
-    }
+    if (!entry.owner) throw new AuthError({ message: 'No tienes suficientes permisos', status: 401 })
 
     // Si la entrada ya tiene tres fotos lanzamos un error.
-    if (entry.photos.length > 2) {
-      throw new Error('Límite de tres fotos alcanzado')
-    }
+    if (entry.photos.length > 2) throw new ContentError({ message: 'Límite de tres fotos alcanzado', status: 418 })
 
     // Guardamos la foto en la carpeta uploads y obtenemos el nombre que le hemos dado.
     const photoName = await savePhoto({ img: req.files.photo, width: maxImageSize })
@@ -138,15 +134,13 @@ async function deleteEntryPhoto (req, res, next) {
     const entry = await getEntryBy({ id, userId })
 
     // Si no somos los dueños de la entrada lanzamos un error.
-    if (!entry.owner) {
-      throw new Error('No tienes suficientes permisos')
-    }
+    if (!entry.owner) throw new AuthError({ message: 'No tienes suficientes permisos', status: 401 })
 
     // Localizamos la foto en el array de fotos de la entrada.
     const photo = entry.photos.find((photo) => photo.id === Number(photoId))
 
     // Si no hay foto lanzamos un error.
-    if (!photo) throw new Error('Foto no encontrada')
+    if (!photo) throw new ContentError({ message: 'Foto no encontrada', status: 404 })
 
     // Borramos la foto de la carpeta uploads.
     await deletePhoto({ name: photo.name })

@@ -1,5 +1,8 @@
 import jwt from 'jsonwebtoken'
 
+// Errors
+import AuthError from '../errors/auth_error.js'
+
 import { SECRET } from '../config.js'
 
 async function authUserOptional (req, res, next) {
@@ -16,7 +19,7 @@ async function authUserOptional (req, res, next) {
       try {
         tokenInfo = jwt.verify(authorization, SECRET)
       } catch {
-        throw new Error('Token inválido')
+        throw new AuthError({ message: 'Token inválido', status: 401 })
       }
 
       req.user = tokenInfo

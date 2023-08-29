@@ -1,5 +1,9 @@
 import getPool from '../pool.js'
 
+// Errors
+import AuthError from '../../errors/auth_error.js'
+import ValidationError from '../../errors/validation_error.js'
+
 async function getUserBy (obj) {
   const queryStr = Object.entries(obj).map(arr => `${arr[0]} = '${arr[1]}'`).join(', ')
   let connection
@@ -29,17 +33,13 @@ async function newUser ({ email, username, password, registrationCode }) {
     let user = await getUserBy({ email })
 
     // Si el array de usuarios tiene más de 0 usuarios quiere decir que el email está repetido.
-    if (user) {
-      throw new Error('Ya existe un usuario con ese email')
-    }
+    if (user) throw new AuthError({ message: 'Ya existe un usuario con ese email' })
 
     // Comprobamos si el nombre de usuario está repetido.
     user = await getUserBy({ username })
 
     // Si el array de usuarios tiene más de 0 usuarios quiere decir que el nombre de usuario está repetido.
-    if (user) {
-      throw new Error('Nombre de usuario no disponible')
-    }
+    if (user) throw new AuthError({ message: 'Nombre de usuario no disponible' })
 
     // Insertamos el usuario en la base de datos.
     const [result] = await connection.query(
@@ -65,7 +65,7 @@ async function updateUserRegCode ({ registrationCode }) {
     const user = await getUserBy({ registrationCode })
 
     // Si no hay usuarios con ese código de registro lanzamos un error.
-    if (!user) throw new Error('Código no encontrado')
+    if (!user) throw new ValidationError({ message: 'Código no encontrado', status: 404 })
 
     // Si existe el usuario, lo actualizamos.
     await connection.query(
@@ -128,7 +128,7 @@ async function updateUserPass ({ recoveryPassCode, newPass }) {
     const user = await getUserBy({ recoveryPassCode })
 
     // Si no hay ningún usuario con ese código de recuperación lanzamos un error.
-    if (!user) throw new Error('Código de recuperación incorrecto')
+    if (!user) throw new ValidationError({ message: 'Código de recuperación incorrecto', status: 404 })
 
     // Actualizamos el usuario.
     await connection.query(

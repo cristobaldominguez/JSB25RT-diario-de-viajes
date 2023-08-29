@@ -26,13 +26,18 @@ import { SECRET } from '../config.js'
 // Services
 import { deletePhoto, savePhoto } from '../services/photos.js'
 
+// Errors
+import AuthError from '../errors/auth_error.js'
+import AccessError from '../errors/access_error.js'
+import ValidationError from '../errors/validation_error.js'
+
 async function createUser (req, res, next) {
   try {
     const { email, username, password } = req.body
 
-    if (!email) throw new Error('El campo email es obligatorio')
-    if (!password) throw new Error('El campo password es obligatorio')
-    if (!username) throw new Error('El campo username es obligatorio')
+    if (!email) throw new ValidationError({ message: 'El campo email es obligatorio', field: 'email' })
+    if (!password) throw new ValidationError({ message: 'El campo password es obligatorio', field: 'password' })
+    if (!username) throw new ValidationError({ message: 'El campo username es obligatorio', field: 'username' })
 
     // Generamos el código de registro.
     const registrationCode = crypto.randomUUID()
@@ -79,17 +84,17 @@ async function loginUser (req, res, next) {
   const { email, password } = req.body
 
   try {
-    if (!email) throw new Error('El campo email es obligatorio')
-    if (!password) throw new Error('El campo password es obligatorio')
+    if (!email) throw new ValidationError({ message: 'El campo email es obligatorio', field: 'email' })
+    if (!password) throw new ValidationError({ message: 'El campo password es obligatorio', field: 'password' })
 
     const user = await getUserBy({ email })
 
     // Revisamos si el usuario esta activado.
-    if (!user.active) throw new Error('Primero debes activar tu usuario')
+    if (!user.active) throw new AccessError({ message: 'Primero debes activar tu usuario' })
 
     // Comprobamos si las contraseñas coinciden.
     const validPass = await bcrypt.compare(password, user.password)
-    if (!validPass) throw new Error('Usuario o contraseña incorrectos')
+    if (!validPass) throw new AuthError({ message: 'Usuario o contraseña incorrectos', status: 401 })
 
     // Objeto con info que queremos agregar al token.
     const tokenInfo = {
@@ -120,7 +125,7 @@ async function getUser (req, res, next) {
     const user = await getUserBy({ id: userId })
 
     // Si no existe ese usuario, retornamos un error
-    if (!user) throw new Error('Usuario no encontrado')
+    if (!user) throw new AccessError({ message: 'Usuario no encontrado' })
 
     // Filtraremos los elementos de usuario que necesitamos
     const { id, username, avatar } = user
@@ -146,7 +151,7 @@ async function editUserAvatar (req, res, next) {
     // Lanzamos un error si falta el avatar. La propiedad files puede no existir en caso
     // de que no recibamos ningún archivo. Usamos la interrogación para indicarle a JavaScript
     // que dicha propiedad puede ser undefined para evitar que se detenga el server con un error.
-    if (!req.files?.avatar) throw new Error('Faltan campos')
+    if (!req.files?.avatar) throw new ValidationError({ message: 'Faltan campos', status: 400 })
 
     // Obtenemos los datos del usuario para comprobar si ya tiene un avatar previo.
     // const user = await getUserBy({ id: req.user.id })
@@ -176,7 +181,7 @@ async function editUserAvatar (req, res, next) {
 async function sendRecoverPass (req, res, next) {
   try {
     const { email } = req.body
-    if (!email) throw new Error('Faltan campos')
+    if (!email) throw new ValidationError({ message: 'Faltan campos', status: 400 })
 
     const user = await getUserBy({ email })
     if (!user) throw user
@@ -206,8 +211,8 @@ async function editUserPass (req, res, next) {
   try {
     const { recoveryPassCode, newPass } = req.body
 
-    if (!newPass) throw new Error('El campo newPass es obligatorio')
-    if (!recoveryPassCode) throw new Error('El campo recoveryPassCode es obligatorio')
+    if (!newPass) throw new ValidationError({ message: 'El campo newPass es obligatorio', status: 400 })
+    if (!recoveryPassCode) throw new ValidationError({ message: 'El campo recoveryPassCode es obligatorio', status: 400 })
 
     // Encriptamos la contraseña
     const hashedPass = await encryptPassword({ password: newPass })
