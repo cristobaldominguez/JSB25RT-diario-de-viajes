@@ -1,6 +1,8 @@
+import colors from 'picocolors'
+
 function errorMiddleware (err, req, res, next) {
   // Error Logging
-  console.log(err)
+  console.error(colors.red(`❌ ${err.message}`))
 
   if (err.isAnError) {
     return res.status(err.status).json(err.toJson())
