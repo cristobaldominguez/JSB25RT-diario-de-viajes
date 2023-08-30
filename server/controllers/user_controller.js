@@ -88,6 +88,7 @@ async function loginUser (req, res, next) {
     if (!password) throw new ValidationError({ message: 'El campo password es obligatorio', field: 'password' })
 
     const user = await getUserBy({ email })
+    if (user instanceof Error) throw user
 
     // Revisamos si el usuario esta activado.
     if (!user.active) throw new AccessError({ message: 'Primero debes activar tu usuario' })
@@ -123,6 +124,7 @@ async function getUser (req, res, next) {
 
     // Obtenemos el usuario desde la base de datos
     const user = await getUserBy({ id: userId })
+    if (user instanceof Error) throw user
 
     // Si no existe ese usuario, retornamos un error
     if (!user) throw new AccessError({ message: 'Usuario no encontrado' })
@@ -154,8 +156,9 @@ async function editUserAvatar (req, res, next) {
     if (!req.files?.avatar) throw new ValidationError({ message: 'Faltan campos', status: 400 })
 
     // Obtenemos los datos del usuario para comprobar si ya tiene un avatar previo.
-    // const user = await getUserBy({ id: req.user.id })
-    const { user } = req
+    // const { user } = req
+    const user = await getUserBy({ id: req.user.id })
+    if (user instanceof Error) throw user
 
     // Si el usuario tiene un avatar previo lo eliminamos.
     if (user.avatar) {
@@ -184,6 +187,7 @@ async function sendRecoverPass (req, res, next) {
     if (!email) throw new ValidationError({ message: 'Faltan campos', status: 400 })
 
     const user = await getUserBy({ email })
+    if (user instanceof Error) throw user
     if (!user) throw user
 
     const recoverPassCode = randomDigits({ number: 9 })

@@ -34,6 +34,7 @@ async function createEntry (req, res, next) {
 
         // Insertamos la foto y obtenemos los datos de la misma.
         const newPhoto = await insertPhoto({ photoName, entryId: entry.id })
+        if (newPhoto instanceof Error) throw newPhoto
 
         // Pusheamos la foto al array de fotos.
         photos.push(newPhoto)
@@ -60,6 +61,7 @@ async function listEntries (req, res, next) {
 
     // Dado que la propiedad user puede no existir lo indicamos por medio de la interrogación.
     const entries = await getAllEntries({ keyword, userId: req.user?.id })
+    if (entries instanceof Error) throw entries
 
     res.send({
       status: 'ok',
@@ -78,6 +80,7 @@ async function getEntry (req, res, next) {
     const userId = req.user?.id
 
     const entry = await getEntryBy({ id, userId })
+    if (entry instanceof Error) throw entry
 
     res.send({
       status: 'ok',
@@ -99,6 +102,7 @@ async function addPhoto (req, res, next) {
     if (!req.files?.photo) throw new ContentError({ message: 'Faltan campos', status: 400 })
 
     const entry = await getEntryBy({ id, userId })
+    if (entry instanceof Error) throw entry
 
     // Si no somos los dueños de la entrada lanzamos un error.
     if (!entry.owner) throw new AuthError({ message: 'No tienes suficientes permisos', status: 401 })
@@ -111,6 +115,7 @@ async function addPhoto (req, res, next) {
 
     // Guardamos la foto en la base de datos.
     const photo = await insertPhoto({ photoName, entryId: id })
+    if (photo instanceof Error) throw photo
 
     res.send({
       status: 'ok',
@@ -132,6 +137,7 @@ async function deleteEntryPhoto (req, res, next) {
     const { id: userId } = req.user
 
     const entry = await getEntryBy({ id, userId })
+    if (entry instanceof Error) throw entry
 
     // Si no somos los dueños de la entrada lanzamos un error.
     if (!entry.owner) throw new AuthError({ message: 'No tienes suficientes permisos', status: 401 })
@@ -143,10 +149,12 @@ async function deleteEntryPhoto (req, res, next) {
     if (!photo) throw new ContentError({ message: 'Foto no encontrada', status: 404 })
 
     // Borramos la foto de la carpeta uploads.
-    await deletePhoto({ name: photo.name })
+    const deletedPhoto = await deletePhoto({ name: photo.name })
+    if (deletedPhoto instanceof Error) throw deletedPhoto
 
     // Borramos la foto en la base de datos.
-    await destroyPhoto({ id: photoId })
+    const destroyedPhoto = await destroyPhoto({ id: photoId })
+    if (destroyedPhoto instanceof Error) throw destroyedPhoto
 
     res.send({
       status: 'ok',

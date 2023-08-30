@@ -9,6 +9,7 @@ async function userExists (req, res, next) {
   try {
     const { id } = req.user
     const user = await getUserBy({ id })
+    if (user instanceof Error) throw user
     if (!user) throw new AuthError({ message: 'Usuario no encontrado', status: 404 })
     if (!user.active) throw new AuthError({ message: 'Usuario no activo', status: 404 })
 

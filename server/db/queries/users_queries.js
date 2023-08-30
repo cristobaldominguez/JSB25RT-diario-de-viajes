@@ -16,7 +16,6 @@ async function getUserBy (obj) {
     )
     return user[0]
   } catch (error) {
-    console.log(error)
     return error
   } finally {
     if (connection) connection.release()
@@ -31,12 +30,14 @@ async function newUser ({ email, username, password, registrationCode }) {
 
     // Comprobamos si el email está repetido.
     let user = await getUserBy({ email })
+    if (user instanceof Error) throw user
 
     // Si el array de usuarios tiene más de 0 usuarios quiere decir que el email está repetido.
     if (user) throw new AuthError({ message: 'Ya existe un usuario con ese email' })
 
     // Comprobamos si el nombre de usuario está repetido.
     user = await getUserBy({ username })
+    if (user instanceof Error) throw user
 
     // Si el array de usuarios tiene más de 0 usuarios quiere decir que el nombre de usuario está repetido.
     if (user) throw new AuthError({ message: 'Nombre de usuario no disponible' })
@@ -46,9 +47,11 @@ async function newUser ({ email, username, password, registrationCode }) {
       'INSERT INTO users (email, username, password, registrationCode, createdAt) VALUES(?, ?, ?, ?, ?)',
       [email, username, password, registrationCode, new Date()]
     )
-    return await getUserBy({ id: result.insertId })
+    user = await getUserBy({ id: result.insertId })
+    if (user instanceof Error) throw user
+
+    return user
   } catch (error) {
-    console.log(error)
     return error
   } finally {
     if (connection) connection.release()
@@ -63,6 +66,7 @@ async function updateUserRegCode ({ registrationCode }) {
 
     // Intentamos localizar a un usuario con el código de registro que nos llegue.
     const user = await getUserBy({ registrationCode })
+    if (user instanceof Error) throw user
 
     // Si no hay usuarios con ese código de registro lanzamos un error.
     if (!user) throw new ValidationError({ message: 'Código no encontrado', status: 404 })
@@ -73,7 +77,6 @@ async function updateUserRegCode ({ registrationCode }) {
       [new Date(), user.id]
     )
   } catch (error) {
-    console.log(error)
     return error
   } finally {
     if (connection) connection.release()
@@ -92,7 +95,6 @@ async function updateUserAvatar ({ avatar, userId }) {
       [avatar, new Date(), userId]
     )
   } catch (error) {
-    console.log(error)
     return error
   } finally {
     if (connection) connection.release()
@@ -111,7 +113,6 @@ async function updateUserRecoverPass ({ id, recoverPassCode }) {
       [recoverPassCode, new Date(), id]
     )
   } catch (error) {
-    console.log(error)
     return error
   } finally {
     if (connection) connection.release()
@@ -126,6 +127,7 @@ async function updateUserPass ({ recoveryPassCode, newPass }) {
 
     // Comprobamos si existe algún usuario con ese código de recuperación.
     const user = await getUserBy({ recoveryPassCode })
+    if (user instanceof Error) throw user
 
     // Si no hay ningún usuario con ese código de recuperación lanzamos un error.
     if (!user) throw new ValidationError({ message: 'Código de recuperación incorrecto', status: 404 })
@@ -136,7 +138,6 @@ async function updateUserPass ({ recoveryPassCode, newPass }) {
       [newPass, new Date(), user.id]
     )
   } catch (error) {
-    console.log(error)
     return error
   } finally {
     if (connection) connection.release()

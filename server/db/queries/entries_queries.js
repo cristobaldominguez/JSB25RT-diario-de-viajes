@@ -23,7 +23,6 @@ async function getEntryBy (obj) {
     }
     return entries[0]
   } catch (error) {
-    console.log(error)
     return error
   } finally {
     if (connection) connection.release()
@@ -40,9 +39,11 @@ async function newEntry ({ title, place, description, userId }) {
       'INSERT INTO entries(title, place, description, userId, createdAt) VALUES(?, ?, ?, ?, ?)',
       [title, place, description, userId, new Date()]
     )
-    return await getEntryBy({ id: savedData.insertId })
+    const entry = await getEntryBy({ id: savedData.insertId })
+    if (entry instanceof Error) throw entry
+
+    return entry
   } catch (error) {
-    console.log(error)
     return error
   } finally {
     if (connection) connection.release()
@@ -65,7 +66,6 @@ async function insertPhoto ({ photoName, entryId }) {
       name: photoName
     }
   } catch (error) {
-    console.log(error)
     return error
   } finally {
     if (connection) connection.release()
@@ -110,6 +110,8 @@ async function getAllEntries ({ keyword = '', userId = 0 }) {
     }
 
     return entries
+  } catch (error) {
+    return error
   } finally {
     if (connection) connection.release()
   }
@@ -126,7 +128,6 @@ async function destroyPhoto ({ id }) {
       [id]
     )
   } catch (error) {
-    console.log(error)
     return error
   } finally {
     if (connection) connection.release()
