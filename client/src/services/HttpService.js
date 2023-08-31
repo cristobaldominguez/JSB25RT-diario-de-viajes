@@ -9,12 +9,15 @@ async function Http({ method = 'GET', url = '/entries', token = null, body = nul
     headers: {
       'Accept': 'application/json',
       'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(body)
+    }
   }
 
   if (token) {
     config.headers.Authorization = token
+  }
+
+  if (body) {
+    config.body = JSON.stringify(body)
   }
 
   try {
