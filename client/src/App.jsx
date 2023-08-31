@@ -1,34 +1,30 @@
+import { Routes, Route } from 'react-router-dom'
+
+// Pages
+import Home from './pages/Home'
+import Login from './pages/Login'
+import Profile from './pages/Profile'
+
+// Rutas Privadas
+import PrivateRoutes from './components/PrivateRoutes'
+
+// Components
+import NavBar from './components/NavBar'
 import Notifications from './components/Notifications'
-import useAuth from './hooks/useAuth'
-import useServer from './hooks/useServer'
 
 function App() {
-  const { isAuthenticated, user } = useAuth()
-  const { post } = useServer()
-
-  const submitHandler = async (e) => {
-    e.preventDefault()
-    const credentials = Object.fromEntries(new FormData(e.target))
-    await post({ url: '/users/login', body: credentials })
-  }
-
   return <>
     <Notifications />
-    <form onSubmit={submitHandler}>
-      <div>
-        <label htmlFor="email">Email</label>
-        <input type="text" name="email" id="email" />
-      </div>
+    <NavBar />
+    <Routes>
+      <Route path='/' element={<Home />} />
+      <Route path='/login' element={<Login />} />
 
-      <div>
-        <label htmlFor="password">Password</label>
-        <input type="password" name="password" id="password" />
-      </div>
-
-      <button type="submit">Iniciar Sesión</button>
-    </form>
-
-    { isAuthenticated && <p>Hola {user.username}!</p> }
+      {/* Rutas privadas */}
+      <Route element={<PrivateRoutes />}>
+        <Route path='/profile' element={<Profile />} />
+      </Route>
+    </Routes>
   </>
 }
 
