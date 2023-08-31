@@ -85,6 +85,7 @@ async function getAllEntries ({ keyword = '', userId = 0 }) {
             e.place,
             e.description,
             u.username,
+            u.avatar,
             e.userId,
             e.userId = ? AS owner,
             e.createdAt
