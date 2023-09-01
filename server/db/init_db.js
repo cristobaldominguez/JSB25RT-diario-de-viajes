@@ -80,21 +80,23 @@ const init = async () => {
     console.log('Creando registros\n')
     console.log('- Agregando usuarios')
     const users = [
-      { username: 'juanperez', email: 'juan@example.com', password: '123123', active: 1, role: 'admin' },
-      { username: 'pedroperez', email: 'pedro@example.com', password: '123123', active: 1, role: 'DEFAULT' },
-      { username: 'diegoperez', email: 'diego@example.com', password: '123123', active: 1, role: 'DEFAULT' }
+      { username: 'juanperez', email: 'juan@example.com', password: '123123', active: 1, role: 'admin', avatar: 'juanperez.jpg' },
+      { username: 'martinaperez', email: 'martina@example.com', password: '123123', active: 1, role: 'DEFAULT', avatar: 'martinaperez.jpg' },
+      { username: 'pedroperez', email: 'pedro@example.com', password: '123123', active: 1, role: 'DEFAULT', avatar: 'pedroperez.jpg' },
+      { username: 'luciaperez', email: 'lucia@example.com', password: '123123', active: 1, role: 'DEFAULT', avatar: 'luciaperez.jpg' },
+      { username: 'diegoperez', email: 'diego@example.com', password: '123123', active: 1, role: 'DEFAULT', avatar: 'diegoperez.jpg' }
     ]
 
     const usersQueryList = []
-    for (const { password, username, email, role, active } of users) {
+    for (const { password, username, email, avatar, role, active } of users) {
       const pwd = await encryptPassword({ password })
       const roleField = role === 'admin' ? '\'admin\'' : role
 
-      usersQueryList.push(`('${username}', '${email}', '${pwd}', ${roleField}, ${active})`)
+      usersQueryList.push(`('${username}', '${email}', '${pwd}', '${avatar}', ${roleField}, ${active})`)
     }
 
     await connection.query(`
-    INSERT INTO users(username, email, password, role, active)
+    INSERT INTO users(username, email, password, avatar, role, active)
       VALUES${usersQueryList.join(',')};
     `)
 
