@@ -50,6 +50,27 @@ async function newEntry ({ title, place, description, userId }) {
   }
 }
 
+async function updateEntry ({ id, title, place, description }) {
+  let connection
+
+  try {
+    connection = await getPool()
+
+    const [savedData] = await connection.query(
+      'UPDATE entries SET title = ?, place = ?, description = ?, modifiedAt = ? WHERE id = ?',
+      [title, place, description, new Date(), id]
+    )
+    const entry = await getEntryBy({ id: savedData.insertId })
+    if (entry instanceof Error) throw entry
+
+    return entry
+  } catch (error) {
+    return error
+  } finally {
+    if (connection) connection.release()
+  }
+}
+
 async function insertPhoto ({ photoName, entryId }) {
   let connection
 
@@ -138,6 +159,7 @@ async function destroyPhoto ({ id }) {
 export {
   getEntryBy,
   newEntry,
+  updateEntry,
   insertPhoto,
   getAllEntries,
   destroyPhoto

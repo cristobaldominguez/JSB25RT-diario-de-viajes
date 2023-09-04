@@ -1,4 +1,4 @@
-import { getEntryBy, newEntry, insertPhoto, getAllEntries, destroyPhoto } from '../db/queries/entries_queries.js'
+import { getEntryBy, newEntry, updateEntry, insertPhoto, getAllEntries, destroyPhoto } from '../db/queries/entries_queries.js'
 
 // Services
 import { savePhoto, deletePhoto } from '../services/photos.js'
@@ -93,6 +93,59 @@ async function getEntry (req, res, next) {
   }
 }
 
+async function editEntry (req, res, next) {
+  try {
+    const { id } = req.params
+    const userId = req.user?.id
+
+    // Revisa si la entrada existe
+    const originalEntry = await getEntryBy({ id, userId })
+    if (originalEntry instanceof Error) throw originalEntry
+
+    // Revisa si la entrada le pertenece al usuario logueado
+    if (!originalEntry.owner) throw new AuthError({ message: 'No tienes suficientes permisos', status: 401 })
+
+    const editedEntry = {
+      ...originalEntry,
+      ...req.body
+    }
+
+    const photos = []
+
+    if (req.files) {
+      const currentPhotosLength = originalEntry.photos.length
+      const availablePhotoSpaces = 3 - currentPhotosLength
+      if (availablePhotoSpaces === 0) throw new ContentError({ message: 'Tienes el número máximo de fotos, para agregar una debes eliminar una', status: 400 })
+
+      const currentPhotos = Object.values(req.files).slice(0, availablePhotoSpaces)
+
+      for (const photo of currentPhotos) {
+        // Guardamos la foto en el disco.
+        const photoName = await savePhoto({ img: photo, width: maxImageSize })
+
+        // Insertamos la foto y obtenemos los datos de la misma.
+        const newPhoto = await insertPhoto({ photoName, entryId: editedEntry.id })
+        if (newPhoto instanceof Error) throw newPhoto
+
+        // Pusheamos la foto al array de fotos.
+        photos.push(newPhoto)
+      }
+    }
+
+    const updatedEntry = await updateEntry(editedEntry)
+    if (updatedEntry instanceof Error) throw updatedEntry
+
+    res.send({
+      status: 'ok',
+      data: {
+        entry: updatedEntry
+      }
+    })
+  } catch (err) {
+    next(err)
+  }
+}
+
 async function addPhoto (req, res, next) {
   try {
     const { id } = req.params
@@ -169,6 +222,7 @@ export {
   createEntry,
   listEntries,
   getEntry,
+  editEntry,
   addPhoto,
   deleteEntryPhoto
 }

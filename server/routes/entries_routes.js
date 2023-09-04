@@ -24,6 +24,9 @@ router.get('/', authUserOptional, userExists, entryController.listEntries)
 // GET /entries/1
 router.get('/:id', authUserOptional, userExists, entryController.getEntry)
 
+// PUT /entries/1
+router.put('/:id', authUserOptional, userExists, entryController.editEntry)
+
 // Agregar imágenes al post
 // POST /entries/1/photos
 router.post('/:id/photos', authUser, userExists, entryController.addPhoto)
