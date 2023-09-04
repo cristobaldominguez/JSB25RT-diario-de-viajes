@@ -3,12 +3,12 @@ import { APIUrl } from '../config.js'
 async function Http({ method = 'GET', url = '/entries', token = null, body = null }) {
   if (!url.startsWith('/')) throw new Error('URL debe comenzar con un /')
 
+  const isFormData = body instanceof FormData
   const fullURL = new URL(APIUrl + url)
   const config = {
     method,
     headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json'
+      'Accept': 'application/json'
     }
   }
 
@@ -16,8 +16,16 @@ async function Http({ method = 'GET', url = '/entries', token = null, body = nul
     config.headers.Authorization = token
   }
 
-  if (body) {
+  if (!isFormData) {
+    config.headers['Content-Type'] = 'application/json'
+  }
+
+  if (body && !isFormData) {
     config.body = JSON.stringify(body)
+  }
+
+  if (body && isFormData) {
+    config.body = body
   }
 
   try {

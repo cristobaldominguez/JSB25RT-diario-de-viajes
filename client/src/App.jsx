@@ -4,6 +4,7 @@ import { Routes, Route } from 'react-router-dom'
 import Home from './pages/Home'
 import Login from './pages/Login'
 import Profile from './pages/Profile'
+import NewEntry from './pages/NewEntry'
 
 // Rutas Privadas
 import PrivateRoutes from './components/PrivateRoutes'
@@ -11,6 +12,7 @@ import PrivateRoutes from './components/PrivateRoutes'
 // Components
 import NavBar from './components/NavBar'
 import Notifications from './components/Notifications'
+import EditEntry from './pages/EditEntry'
 
 function App() {
   return <>
@@ -22,6 +24,10 @@ function App() {
 
       {/* Rutas privadas */}
       <Route element={<PrivateRoutes />}>
+        <Route path='/entries'>
+          <Route path='/entries/new' element={<NewEntry />} />
+          <Route path='/entries/:id/edit' element={<EditEntry />} />
+        </Route>
         <Route path='/profile' element={<Profile />} />
       </Route>
     </Routes>

@@ -1,22 +1,37 @@
 import { useEffect, useState } from 'react'
+
 import useServer from '../hooks/useServer'
 import { APIUrl } from '../config'
+import SearchBar from '../components/SearchBar'
+import useAuth from '../hooks/useAuth'
+import EntryFooter from '../components/EntryFooter'
 
 function Home() {
-  const [ entries, setEntries ] = useState()
+  const [entries, setEntries] = useState()
+  const [keyword, setKeyword] = useState('')
   const { get } = useServer()
+  const { isAuthenticated } = useAuth()
+
+  const getEntries = () => {
+    get({ url: `/entries?keyword=${keyword}` }).then(({ data }) => data.data && setEntries(data.data?.entries))
+  }
+
+  const searchSubmitHandler = (e) => {
+    e.preventDefault()
+    setKeyword(e.target.keyword.value)
+  }
 
   useEffect(() => {
-    get({ url: '/entries' }).then(({data}) => setEntries(data.data.entries))
+    getEntries()
   }, [])
 
   useEffect(() => {
-    console.log(entries)
-  }, [entries])
+    getEntries()
+  }, [keyword])
 
   const avatar = (img) => {
-    return img ? 
-      <img src={APIUrl + '/images/' + img} alt="" className="h-10 w-10 rounded-full bg-gray-100" /> : 
+    return img ?
+      <img src={APIUrl + '/images/' + img} alt="" className="h-10 w-10 rounded-full bg-gray-100" /> :
       <span className="inline-block h-10 w-10 overflow-hidden rounded-full bg-gray-100">
         <svg className="h-full w-full text-gray-300" fill="currentColor" viewBox="0 0 24 24">
           <path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z" />
@@ -32,6 +47,7 @@ function Home() {
           <p className="mt-2 text-lg leading-8 text-gray-600">
             Learn how to grow your business with our expert advice.
           </p>
+          <SearchBar submitHandler={searchSubmitHandler} />
         </div>
         <div className="mx-auto mt-16 grid max-w-2xl grid-cols-1 gap-x-8 gap-y-20 lg:mx-0 lg:max-w-none lg:grid-cols-3">
           {entries && entries.map((post) => (
@@ -77,6 +93,7 @@ function Home() {
                   </div>
                 </div>
               </div>
+              {isAuthenticated && !!post.owner && <EntryFooter id={post.id} />}
             </article>
           ))}
         </div>

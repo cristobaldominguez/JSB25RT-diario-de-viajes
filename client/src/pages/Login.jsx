@@ -1,12 +1,15 @@
+import { useNavigate } from 'react-router-dom'
 import useServer from '../hooks/useServer'
 
 function Login() {
   const { post } = useServer()
+  const navigate = useNavigate()
 
   const submitHandler = async (e) => {
     e.preventDefault()
     const credentials = Object.fromEntries(new FormData(e.target))
-    await post({ url: '/users/login', body: credentials })
+    const { data } = await post({ url: '/users/login', body: credentials })
+    if (data.status === 'ok') navigate('/')
   }
 
   return (
