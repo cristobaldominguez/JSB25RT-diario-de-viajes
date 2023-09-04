@@ -80,6 +80,7 @@ const init = async () => {
     console.log('Creando registros\n')
     console.log('- Agregando usuarios')
     const users = [
+      { username: 'username', email: 'user@example.com', password: '123123', active: 1, role: 'admin', avatar: 'username.jpg' },
       { username: 'juanperez', email: 'juan@example.com', password: '123123', active: 1, role: 'admin', avatar: 'juanperez.jpg' },
       { username: 'martinaperez', email: 'martina@example.com', password: '123123', active: 1, role: 'DEFAULT', avatar: 'martinaperez.jpg' },
       { username: 'pedroperez', email: 'pedro@example.com', password: '123123', active: 1, role: 'DEFAULT', avatar: 'pedroperez.jpg' },
@@ -109,9 +110,9 @@ const init = async () => {
       VALUES('El amour!', 'Paris', 'Un gran lugar para visitar', 3),
             ('Vacaciones por siempre', 'Bora Bora', 'Tienes que venir!', 1),
             ('Wow, miren la vista!', 'Parque nacional de los Glaciares', 'Es un gran lugar, pero frío', 2),
-            ('Todos los caminos llegan a Roma!', 'Roma', 'La cuna de una gran civilización', 1),
-            ('Santa Marta es puro sabor', 'Santa Marta', 'Una ciudad de diversidades; en su paisaje, en su gente y en cada aspecto cultural.', 1),
-            ('Muchas maneras de disfrutar', 'Islandia', 'Acogedoras comarcas, montañas espectaculares e islas frente a las costas hacen de Islandia un mundo único.', 1);
+            ('Todos los caminos llegan a Roma!', 'Roma', 'La cuna de una gran civilización', 4),
+            ('Santa Marta es puro sabor', 'Santa Marta', 'Una ciudad de diversidades; en su paisaje, en su gente y en cada aspecto cultural.', 6),
+            ('Muchas maneras de disfrutar', 'Islandia', 'Acogedoras comarcas, montañas espectaculares e islas frente a las costas hacen de Islandia un mundo único.', 5);
     `)
     console.log('- Entries creadas\n')
 
