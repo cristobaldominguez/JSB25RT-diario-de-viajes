@@ -1,10 +1,13 @@
 import { useEffect, useState } from 'react'
 
 import useServer from '../hooks/useServer'
-import { APIUrl } from '../config'
 import SearchBar from '../components/SearchBar'
 import useAuth from '../hooks/useAuth'
 import EntryFooter from '../components/EntryFooter'
+import Carousel from '../components/Carousel'
+
+// Helpers
+import avatar from '../helpers/avatar'
 
 function Home() {
   const [entries, setEntries] = useState([])
@@ -30,16 +33,6 @@ function Home() {
     getEntries()
   }, [keyword])
 
-  const avatar = (img) => {
-    return img ?
-      <img src={APIUrl + '/images/' + img} alt="" className="h-10 w-10 rounded-full bg-gray-100" /> :
-      <span className="inline-block h-10 w-10 overflow-hidden rounded-full bg-gray-100">
-        <svg className="h-full w-full text-gray-300" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z" />
-        </svg>
-      </span>
-  }
-
   return (
     <div className="bg-white py-24 sm:py-32">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
@@ -54,11 +47,9 @@ function Home() {
           {entries && entries.map((post) => (
             <article key={post.id} className="flex flex-col items-start justify-between">
               <div className="relative w-full">
-                <img
-                  src={APIUrl + '/images/' + post.photos[0].name}
-                  alt={post.title}
-                  className="aspect-[16/9] w-full rounded-2xl bg-gray-100 object-cover sm:aspect-[2/1] lg:aspect-[3/2]"
-                />
+                <div className="rounded-2xl">
+                  <Carousel photos={post.photos} />
+                </div>
                 <div className="absolute inset-0 rounded-2xl ring-1 ring-inset ring-gray-900/10" />
               </div>
               <div className="max-w-xl">

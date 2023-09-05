@@ -6,12 +6,18 @@ import { NavLink, Link, useNavigate } from 'react-router-dom'
 // Custom Hooks
 import useAuth from '../hooks/useAuth'
 
+// Helpers
+import avatar from '../helpers/avatar'
+
+// CSS
+import './NavBar.css'
+
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
 function NavBar() {
-  const { isAuthenticated, logout } = useAuth()
+  const { isAuthenticated, logout, user } = useAuth()
   const navigate = useNavigate()
 
   const logoutHandler = () => {
@@ -35,16 +41,16 @@ function NavBar() {
                 </div>
                 <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
                   {/* Current: "border-indigo-500 text-gray-900", Default: "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700" */}
-                  <NavLink to="/" className="inline-flex items-center border-b-2 border-indigo-500 px-1 pt-1 text-sm font-medium text-gray-900">
+                  <NavLink to="/" className={({ isActive }) => isActive ? 'link active' : 'link default'}>
                     Inicio
                   </NavLink>
-                  {!isAuthenticated && <NavLink to="/login" className="inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700">
+                  {!isAuthenticated && <NavLink to="/login" className={({ isActive }) => isActive ? 'link active' : 'link default'}>
                     Login
                   </NavLink>}
-                  {isAuthenticated && <NavLink to="/entries/new" className="inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700">
+                  {isAuthenticated && <NavLink to="/entries/new" className={({ isActive }) => isActive ? 'link active' : 'link default'}>
                     Nueva Entrada
                   </NavLink>}
-                  {isAuthenticated && <NavLink to="/profile" className="inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700">
+                  {isAuthenticated && <NavLink to="/profile" className={({ isActive }) => isActive ? 'link active' : 'link default'}>
                     Profile
                   </NavLink>}
                 </div>
@@ -65,11 +71,7 @@ function NavBar() {
                     <Menu.Button className="relative flex rounded-full bg-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
                       <span className="absolute -inset-1.5" />
                       <span className="sr-only">Open user menu</span>
-                      <img
-                        className="h-8 w-8 rounded-full"
-                        src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                        alt=""
-                      />
+                      {isAuthenticated && avatar(user.avatar)}
                     </Menu.Button>
                   </div>
                   <Transition

@@ -1,0 +1,21 @@
+.link {
+  @apply inline-flex;
+  @apply items-center;
+  @apply border-b-2;
+  @apply px-1;
+  @apply pt-1;
+  @apply text-sm;
+  @apply font-medium;
+}
+
+.link.default {
+  @apply border-transparent;
+  @apply text-gray-500;
+  @apply hover:border-gray-300;
+  @apply hover:text-gray-700;
+}
+
+.link.active {
+  @apply border-indigo-500;
+  @apply text-gray-900;
+}
