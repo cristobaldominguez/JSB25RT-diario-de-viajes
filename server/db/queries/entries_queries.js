@@ -50,17 +50,17 @@ async function newEntry ({ title, place, description, userId }) {
   }
 }
 
-async function updateEntry ({ id, title, place, description }) {
+async function updateEntry ({ id, userId, title, place, description }) {
   let connection
 
   try {
     connection = await getPool()
 
-    const [savedData] = await connection.query(
+    const savedData = await connection.query(
       'UPDATE entries SET title = ?, place = ?, description = ?, modifiedAt = ? WHERE id = ?',
       [title, place, description, new Date(), id]
     )
-    const entry = await getEntryBy({ id: savedData.insertId })
+    const entry = await savedData && await getEntryBy({ id, userId })
     if (entry instanceof Error) throw entry
 
     return entry

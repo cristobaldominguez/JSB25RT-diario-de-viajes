@@ -80,7 +80,7 @@ const init = async () => {
     console.log('Creando registros\n')
     console.log('- Agregando usuarios')
     const users = [
-      { username: 'username', email: 'user@example.com', password: '123123', active: 1, role: 'admin', avatar: 'username.jpg' },
+      { username: 'cristobaldominguez', email: 'cristobal@example.com', password: '123123', active: 1, role: 'admin', avatar: 'cristobaldominguez.jpg' },
       { username: 'juanperez', email: 'juan@example.com', password: '123123', active: 1, role: 'admin', avatar: 'juanperez.jpg' },
       { username: 'martinaperez', email: 'martina@example.com', password: '123123', active: 1, role: 'DEFAULT', avatar: 'martinaperez.jpg' },
       { username: 'pedroperez', email: 'pedro@example.com', password: '123123', active: 1, role: 'DEFAULT', avatar: 'pedroperez.jpg' },

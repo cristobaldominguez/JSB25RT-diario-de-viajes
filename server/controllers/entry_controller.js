@@ -137,6 +137,7 @@ async function editEntry (req, res, next) {
 
     res.send({
       status: 'ok',
+      message: 'Entrada actualizada',
       data: {
         entry: updatedEntry
       }

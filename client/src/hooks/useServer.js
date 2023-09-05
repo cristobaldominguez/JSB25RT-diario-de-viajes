@@ -17,15 +17,19 @@ function useServer() {
       toast.error(data.error.message)
     }
 
+    if (data.message) {
+      toast.success(data.message)
+    }
+
     return { data, loading, error }
   }
 
   return {
-    get: ({ url }) => Http({ url, token }),
+    get: ({ url }) => Http({ url, token }).then(handleResponse),
     post: ({ url, body }) => Http({ method: 'POST', url, token, body }).then(handleResponse),
     put: ({ url, body }) => Http({ method: 'PUT', url, token, body }).then(handleResponse),
     patch: ({ url, body }) => Http({ method: 'PATCH', url, token, body }).then(handleResponse),
-    delete: ({ url }) => Http({ method: 'DELETE', url, token })
+    delete: ({ url }) => Http({ method: 'DELETE', url, token }).then(handleResponse)
   }
 }
 

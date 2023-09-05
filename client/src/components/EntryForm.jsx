@@ -1,7 +1,9 @@
 import { UserCircleIcon } from '@heroicons/react/24/solid'
 import { useState } from 'react'
 
-function EntryForm({ handleSubmit, entry }) {
+import EditPhotoList from './EditPhotoList'
+
+function EntryForm({ handleSubmit, entry, deletePhoto }) {
   const [ currentEntry, setCurrentEntry ] = useState(entry)
 
   const entryChangeHandler = ({ target }) => {
@@ -67,6 +69,10 @@ function EntryForm({ handleSubmit, entry }) {
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 />
               </div>
+            </div>
+
+            <div className="col-span-full">
+              {entry.photos && <EditPhotoList photos={entry.photos} deletePhotoHandler={deletePhoto} />}
             </div>
 
             <div className="col-span-full">

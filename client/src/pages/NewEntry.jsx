@@ -19,7 +19,7 @@ function NewEntry() {
     <p className="mt-2 text-lg leading-8 text-gray-600 text-center">
       Learn how to grow your business with our expert advice.
     </p>
-    <EntryForm handleSubmit={handleSubmit} entry={{}} />
+    <EntryForm handleSubmit={handleSubmit} entry={{}} deletePhoto={{}} />
   </div>
   </>
 }

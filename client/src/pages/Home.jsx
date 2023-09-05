@@ -7,13 +7,14 @@ import useAuth from '../hooks/useAuth'
 import EntryFooter from '../components/EntryFooter'
 
 function Home() {
-  const [entries, setEntries] = useState()
+  const [entries, setEntries] = useState([])
   const [keyword, setKeyword] = useState('')
   const { get } = useServer()
   const { isAuthenticated } = useAuth()
 
   const getEntries = () => {
-    get({ url: `/entries?keyword=${keyword}` }).then(({ data }) => data.data && setEntries(data.data?.entries))
+    get({ url: `/entries?keyword=${keyword}` })
+      .then(({ data }) => data.data && setEntries(data.data?.entries))
   }
 
   const searchSubmitHandler = (e) => {
